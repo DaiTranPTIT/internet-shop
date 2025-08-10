@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Apache + PHP Service
+  web:
+    image: php:8.2-apache
+    container_name: apache_php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+      - ./apache-config:/etc/apache2/sites-available
+    depends_on:
+      - db
+    environment:
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
+    command: >
+      bash -c "
+      docker-php-ext-install mysqli pdo pdo_mysql &&
+      a2enmod rewrite &&
+      apache2-foreground
+      "
+    networks:
+      - lamp-network
+
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: mysql_server
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: quan_ly_cua_hang
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - lamp-network
+
+  # phpMyAdmin (optional - để quản lý database)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    depends_on:
+      - db
+    networks:
+      - lamp-network
+
+volumes:
+  mysql_data:
+
+networks:
+  lamp-network:
+    driver: bridge
