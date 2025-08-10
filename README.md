@@ -162,11 +162,3 @@ Lỗi kết nối: SQLSTATE[HY000] [1045] Access denied
 
 ### Lỗi hiển thị tiếng Việt
 **Giải pháp**: Đảm bảo database sử dụng charset `utf8mb4`
-
-## 📞 Hỗ trợ
-
-Hệ thống được thiết kế đơn giản, dễ sử dụng và bảo trì. Mọi tính năng đều có validation và error handling đầy đủ.
-
----
-
-**Chúc bạn sử dụng thành công! 🎉**
